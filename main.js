@@ -13,7 +13,7 @@ document.body.appendChild(renderer.domElement);
 const loader = new GLTFLoader();
 
 let model = null;
-loader.load( 'mechanical_keyboard_-_aesthetic.glb', function ( gltf ) {
+loader.load( 'public/mechanical_keyboard_-_aesthetic.glb', function ( gltf ) {
 model = gltf.scene;
 model.scale.set(1.5, 1.5, 1.5);
   scene.add( model );
