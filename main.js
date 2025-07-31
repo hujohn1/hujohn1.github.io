@@ -1,5 +1,5 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'https://jspm.dev/three';
+import { GLTFLoader } from 'https://jspm.dev/three/examples/jsm/loaders/GLTFLoader.js';
 
 //3JS
 const scene = new THREE.Scene();
