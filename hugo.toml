@@ -1,4 +1,4 @@
-baseURL = 'https://johnhu.ca/'
+baseURL = 'https://hujohn1.github.io/'
 locale = 'en-us'
 title = 'John Hu'
 theme = 'hugo-theme-console'
@@ -29,3 +29,7 @@ theme = 'hugo-theme-console'
 
 [markup.goldmark.renderer]
   unsafe = true
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'

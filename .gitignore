@@ -1,5 +1,4 @@
 /public/
-/resources/_gen/
 
 # Local cache and temporary lock files
 /.hugo_build.lock
