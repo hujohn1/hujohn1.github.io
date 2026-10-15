@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Photos on John Hu</title>
+		<link>http://localhost:1313/photos/</link>
+		<description>Recent content in Photos on John Hu</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Mon, 12 Oct 2026 00:00:00 +0000</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/photos/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Home bench setup</title>
+				<link>http://localhost:1313/photos/home-setup/</link>
+				<pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/photos/home-setup/</guid>
+				<description>&lt;p&gt;Current home bench: Digilent logic analyzer, Analog Discovery (1st edition), PPS, analog ICs, ESPs, and various microcontrollers.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>SCARA robot arm</title>
+				<link>http://localhost:1313/photos/scara-robot-arm/</link>
+				<pubDate>Sun, 11 Oct 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/photos/scara-robot-arm/</guid>
+				<description>&lt;p&gt;Small-scale SCARA robot arm with a 5:1 reduction. Shoulder on a NEMA 17 + GT2 belt, Z on a lead screw, arm on a pancake NEMA 17, Arduino Uno + CNC shield.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Miniature cycloidal drive</title>
+				<link>http://localhost:1313/photos/cycloidal-drive/</link>
+				<pubDate>Sat, 10 Oct 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/photos/cycloidal-drive/</guid>
+				<description>&lt;p&gt;CAD for a small-scale cycloidal drive modeled in Fusion 360, meant to be printed in PLA with AliExpress ball bearings.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>SCARA CAD</title>
+				<link>http://localhost:1313/photos/scara-cad/</link>
+				<pubDate>Sun, 20 Sep 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/photos/scara-cad/</guid>
+				<description>&lt;p&gt;Fusion 360 model of the SCARA arm (v0).&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>SCARA section view</title>
+				<link>http://localhost:1313/photos/scara-section/</link>
+				<pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/photos/scara-section/</guid>
+				<description>&lt;p&gt;Section view of the SCARA CAD, showing the reduction and joint stackup.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>SCARA notes</title>
+				<link>http://localhost:1313/photos/scara-notes/</link>
+				<pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/photos/scara-notes/</guid>
+				<description>&lt;p&gt;Paper sketches for the SCARA arm before CAD.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

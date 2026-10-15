@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>John Hu/posts/building-a-bt-macropad-with-the-nrf52840plus/</title>
+    <meta name="description" content="Engineering student at Duke. Mechatronics, power electronics, analog circuits, and building things.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <meta name="googlebot" content="index,follow,snippet,archive">
+    <link rel="stylesheet" href="http://localhost:1313/hugo-theme-console/css/terminal-0.7.4.min.css">
+    <link rel="stylesheet" href="http://localhost:1313/hugo-theme-console/css/animate-4.1.1.min.css">
+    <link rel="stylesheet" href="http://localhost:1313/hugo-theme-console/css/console.css">
+    
+      
+      <link rel="stylesheet" href="/css/custom.min.da98dd06249c088080ae165c50f25ff4b54951f49e1dfd9432502223f8e7fb72.css" integrity="sha256-2pjdBiScCICArhZcUPJf9LVJUfSeHf2UMlAiI/jn&#43;3I=">
+    
+    
+      <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+       <meta property="og:title" content="Building a BT macropad with the nRF52840Plus" />
+<meta property="og:description" content="Engineering student at Duke. Mechatronics, power electronics, analog circuits, and building things." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/posts/building-a-bt-macropad-with-the-nrf52840plus/" /><meta property="article:published_time" content="2026-09-24T22:00:00-04:00" />
+
+
+
+<meta name="twitter:title" content="Building a BT macropad with the nRF52840Plus"/>
+<meta name="twitter:description" content="
+			
+		
+
+I was interested in working with BT and NFC so what better way to experiment than to make a small keyboard.
+In the last iteration of my adventure with keyboards, I routed a ATMEGA328P by myself with no status LEDS, way to debug anything besides tracing with a multimeter so I resolved to create a working circuit board this time with some more proper documentation."/>
+
+</head>
+<body class="terminal">
+    <div class="container">
+        <div class="terminal-nav">
+          <header class="terminal-logo">
+            <div class="logo terminal-prompt">
+              
+              
+              <a href="http://localhost:1313/" class="no-style site-name">John Hu</a>:~# 
+              <a href='http://localhost:1313/posts'>posts</a>/<a href='http://localhost:1313/posts/building-a-bt-macropad-with-the-nrf52840plus'>building-a-bt-macropad-with-the-nrf52840plus</a>/</div></header>
+          <nav class="terminal-menu">
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a property="item" typeof="WebPage" href="http://localhost:1313/about/">
+                    <span property="name">About</span></a>
+                    <meta property="position" content="1" />
+                </li>
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a property="item" typeof="WebPage" href="http://localhost:1313/posts/">
+                    <span property="name">Posts</span></a>
+                    <meta property="position" content="2" />
+                </li>
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a property="item" typeof="WebPage" href="http://localhost:1313/photos/">
+                    <span property="name">Photos</span></a>
+                    <meta property="position" content="3" />
+                </li>
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a property="item" typeof="WebPage" href="http://localhost:1313/resume/">
+                    <span property="name">Resume</span></a>
+                    <meta property="position" content="4" />
+                </li>
+                
+            </ul>
+          </nav>
+        </div>
+    </div>
+
+    <div class="container animate-fade-up" >
+        
+<h1>Building a BT macropad with the nRF52840Plus</h1>
+
+Sep 24, 2026
+
+
+<br/><br/>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+			<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/qJX9LS07LZ4?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"></iframe>
+		</div>
+
+<p>I was interested in working with BT and NFC so what better way to experiment than to make a small keyboard.
+In the last iteration of my adventure with keyboards, I routed a ATMEGA328P by myself with no status LEDS, way to debug anything besides tracing with a multimeter so I resolved to create a working circuit board this time with some more proper documentation.</p>
+<p>Originally, I had started routing the RF chip antena myself but I found myself referring to the SEEED-XIAO schematic so I decided screw it, might as well use what they already had.</p>
+<h2 id="hardware">Hardware</h2> <p>I decided on the SEED-XIAO nrf52840Plus for its adequate pins for my purpose, low quiscent current draw, and Bluetooth capability. The regular nrf52840 has too few pins for the key matrix rows and columns AND the SCL/SDA AND two extra EC11 pins. I did some quick google searches for the average Ah draw used by a keyboard for both on and off states and found a suitable LiPo and its JST2.0 connector.</p>
+<h2 id="schematic">Schematic</h2> <p>Peep the Test points</p>
+<figure style="text-align: center;">
+  <img src="/Screenshot 2026-10-13 203636.png" alt="Schematic"  style="width: 700px; height: auto;">
+  <figcaption>KiCad Result</figcaption>
+</figure>
+<h2 id="pcb-layout">PCB Layout</h2> <figure style="text-align: center;">
+  <img src="/Screenshot 2026-10-13 203518.png" alt="Quick render"  style="width: 700px; height: auto;">
+  <figcaption>KiCad Result</figcaption>
+</figure>
+<p>Routing was generally straightforward and I knew the layout I wanted already.</p>
+<h2 id="assembly">Assembly</h2> <p>I ended up soldering the castellated holes with solder paste and a hot plate sourced from the school. Thanks Chris!</p>
+<h2 id="firmware">Firmware</h2> <p>I decided on using the zmk software which is well supported for the Nordic line of semiconductors, Pro Micros, and most other keyboard enthusiast microcontroller boards.</p>
+<p>It was relatively straightforward to get working.
+I flashed the uf2 made through github actions and then uploaded to the bootloader over the usb port on my computer.
+It took some time to figure out how to edit the synatactical xml sugar like the keymap, definitions, etc.</p>
+<h2 id="problems">Problems</h2> <p>I could not get the rotary EC11 knob to work for some reason. <br>
+The quadrature pins were taken from an obscure forum but it showed significant instability in scrolling. <br>
+[WIP] Will need to use a logic analyzer and pinpoint this.</p>
+<h2 id="takeaways-and-what-i-learned">Takeaways and what I learned</h2> <ul>
+<li>Sometimes paying a few more dollars for the non-cheap clone can be worth it.</li>
+<li>Always think about the physical orientation of parts. Retrospectively, I would have used pin headers for the nrf52840 instead of soldering it directly.</li>
+</ul>
+<p>That&rsquo;s all from me! See you next time</p>
+
+
+
+        <div class="footer">
+    © 2026 John Hu ·
+    <a href="mailto:johnhu1235@gmail.com">email</a> ·
+    <a href="https://github.com/hujohn1" target="_blank" rel="noopener">GitHub</a> ·
+    <a href="https://www.linkedin.com/in/johnhu2/" target="_blank" rel="noopener">LinkedIn</a>
+</div>
+
+    </div>
+  </body>
+</html>

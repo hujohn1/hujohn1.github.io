@@ -1,0 +1,53 @@
+{{ define "main" }}
+
+<h1>About</h1>
+
+<p>
+Hi! I'm John Hu, a third year Electrical Engineering student @ <a href="https://www.duke.edu/" target="_blank" rel="noopener">Duke</a> with strong interests in EVs, power electronics, and analog circuit design.
+I also act as the club president for Duke Hyperloop, where I lead, organize, and work with a team of students to make a concept Hyperloop system.
+<a href="{{ "about/" | relURL }}">(more)</a>
+</p>
+<br/>
+
+<h1>Projects</h1>
+
+<ul>
+  <li><strong>Scara Robot Arm</strong> — small-scale SCARA with a 5:1 reduction, NEMA 17s, GT2 belt, lead screw Z, Arduino Uno + CNC shield.</li>
+  <li><strong>Miniature Cycloidal Drive</strong> — compact high-ratio gearbox modeled in Fusion 360, printed in PLA, AliExpress bearings.</li>
+  <li><strong>FPGA Dev with Tang Nano</strong> — Verilog LED blink on a Sipeed Tang Nano, Gowin toolchain.</li>
+</ul>
+<br/>
+
+<h1>Latest posts</h1>
+
+<div class="posts-list">
+{{ with .Site.GetPage "/posts" }}
+    {{ range first 3 (sort .Pages "Date" "desc" (where .Pages ".Params.private" "!=" true))}}
+        <div class="post">
+            <p>
+                <div class="date">{{ .Date | time.Format ":date_medium" }}</div>
+                <h1><a href="{{ .Permalink }}" title="{{ .Title }}">{{ .Title }}</a></h1>
+                
+            </p>
+        </div>
+    {{ end }}
+{{ end }}
+</div>
+
+<h1>Latest photos</h1>
+
+<div class="image-grid">
+{{ with .Site.GetPage "/photos" }}
+    {{ range first 3 (sort .Pages "Date" "desc")}}
+        <a href="{{ .Permalink }}" title="{{ .Title }}">
+        {{ $image := .Page.Resources.GetMatch .Params.image }}
+        {{ with $image }}
+            {{ $thumb := .Resize "400x" }}
+            <img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" class="img-responsive">
+        {{end}}
+        </a>
+    {{ end }}
+{{ end }}
+</div>
+
+{{ end }}

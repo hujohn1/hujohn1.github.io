@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Posts on John Hu</title>
+		<link>http://localhost:1313/posts/</link>
+		<description>Recent content in Posts on John Hu</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Mon, 12 Oct 2026 22:00:00 -0400</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Making myself design a PCB for the comma.ai Challenge in under 24 Hrs</title>
+				<link>http://localhost:1313/posts/24-hr-doing-the-comma-ai-challenge/</link>
+				<pubDate>Mon, 12 Oct 2026 22:00:00 -0400</pubDate>
+				<guid>http://localhost:1313/posts/24-hr-doing-the-comma-ai-challenge/</guid>
+				<description>&lt;figure style=&#34;text-align: center;&#34;&gt;&#xA;  &lt;img src=&#34;http://localhost:1313/Screenshot 2026-10-12 223092.png&#34; alt=&#34;My photo&#34;  style=&#34;width: 700px; height: auto;&#34;&gt;&#xA;  &lt;figcaption&gt;KiCad Result&lt;/figcaption&gt;&#xA;&lt;/figure&gt;&#xA;After taking a slight fork in the road, I decided to return once again to pcb work, something I&#39;m not fully competent in (yet). Coincidentally, comma.ai released a challenge so I decided to test my boundaries and hopefully figure out what I need to work on. &#xA;&lt;p&gt;If you don&amp;rsquo;t know them, (pull up a browser now), comma.ai is a pioneering ai and self-driving company run by George Hotz, whom is also known for various &amp;ldquo;hacks&amp;rdquo;. They&amp;rsquo;ve made Openpilot, a L2 operational self driving software that is a really nice open-source version of the things that other automotive manufacturers keep behind closed doors.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Building a BT macropad with the nRF52840Plus</title>
+				<link>http://localhost:1313/posts/building-a-bt-macropad-with-the-nrf52840plus/</link>
+				<pubDate>Thu, 24 Sep 2026 22:00:00 -0400</pubDate>
+				<guid>http://localhost:1313/posts/building-a-bt-macropad-with-the-nrf52840plus/</guid>
+				<description>&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;&#xA;&#x9;&#x9;&#x9;&lt;iframe allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen&#34; loading=&#34;eager&#34; referrerpolicy=&#34;strict-origin-when-cross-origin&#34; src=&#34;https://www.youtube.com/embed/qJX9LS07LZ4?autoplay=0&amp;amp;controls=1&amp;amp;end=0&amp;amp;loop=0&amp;amp;mute=0&amp;amp;start=0&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; title=&#34;YouTube video&#34;&gt;&lt;/iframe&gt;&#xA;&#x9;&#x9;&lt;/div&gt;&#xA;&#xA;&lt;p&gt;I was interested in working with BT and NFC so what better way to experiment than to make a small keyboard.&#xA;In the last iteration of my adventure with keyboards, I routed a ATMEGA328P by myself with no status LEDS, way to debug anything besides tracing with a multimeter so I resolved to create a working circuit board this time with some more proper documentation.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

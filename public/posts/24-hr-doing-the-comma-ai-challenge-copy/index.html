@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>John Hu/posts/24-hr-doing-the-comma-ai-challenge-copy/</title>
+    <meta name="description" content="Engineering student at Duke. Mechatronics, power electronics, analog circuits, and building things.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <meta name="googlebot" content="index,follow,snippet,archive">
+    <link rel="stylesheet" href="http://localhost:1313/hugo-theme-console/css/terminal-0.7.4.min.css">
+    <link rel="stylesheet" href="http://localhost:1313/hugo-theme-console/css/animate-4.1.1.min.css">
+    <link rel="stylesheet" href="http://localhost:1313/hugo-theme-console/css/console.css">
+    
+      
+      <link rel="stylesheet" href="/css/custom.min.da98dd06249c088080ae165c50f25ff4b54951f49e1dfd9432502223f8e7fb72.css" integrity="sha256-2pjdBiScCICArhZcUPJf9LVJUfSeHf2UMlAiI/jn&#43;3I=">
+    
+    
+      <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+       <meta property="og:title" content="Building a BT macropad with the nRF52840Plus" />
+<meta property="og:description" content="Engineering student at Duke. Mechatronics, power electronics, analog circuits, and building things." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/posts/24-hr-doing-the-comma-ai-challenge-copy/" /><meta property="article:published_time" content="2026-09-24T22:00:00-04:00" />
+
+
+
+<meta name="twitter:title" content="Building a BT macropad with the nRF52840Plus"/>
+<meta name="twitter:description" content="
+  
+  KiCad Result
+
+After taking a slight fork in the road, I decided to return once again to pcb work, something I&#39;m not fully competent in (yet). Coincidentally, comma.ai released a challenge so I decided to test my boundaries and hopefully figure out what I need to work on. 
+If you don&rsquo;t know them, (pull up a browser now), comma.ai is a pioneering ai and self-driving company run by George Hotz, whom is also known for various &ldquo;hacks&rdquo;. They&rsquo;ve made Openpilot, a L2 operational self driving software that is a really nice open-source version of the things that other automotive manufacturers keep behind closed doors."/>
+
+</head>
+<body class="terminal">
+    <div class="container">
+        <div class="terminal-nav">
+          <header class="terminal-logo">
+            <div class="logo terminal-prompt">
+              
+              
+              <a href="http://localhost:1313/" class="no-style site-name">John Hu</a>:~# 
+              <a href='http://localhost:1313/posts'>posts</a>/<a href='http://localhost:1313/posts/24-hr-doing-the-comma-ai-challenge-copy'>24-hr-doing-the-comma-ai-challenge-copy</a>/</div></header>
+          <nav class="terminal-menu">
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a property="item" typeof="WebPage" href="http://localhost:1313/about/">
+                    <span property="name">About</span></a>
+                    <meta property="position" content="1" />
+                </li>
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a property="item" typeof="WebPage" href="http://localhost:1313/posts/">
+                    <span property="name">Posts</span></a>
+                    <meta property="position" content="2" />
+                </li>
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a property="item" typeof="WebPage" href="http://localhost:1313/photos/">
+                    <span property="name">Photos</span></a>
+                    <meta property="position" content="3" />
+                </li>
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a property="item" typeof="WebPage" href="http://localhost:1313/resume/">
+                    <span property="name">Resume</span></a>
+                    <meta property="position" content="4" />
+                </li>
+                
+            </ul>
+          </nav>
+        </div>
+    </div>
+
+    <div class="container animate-fade-up" >
+        
+<h1>Building a BT macropad with the nRF52840Plus</h1>
+
+Sep 24, 2026
+
+
+<br/><br/>
+<figure style="text-align: center;">
+  <img src="/Screenshot 2026-10-12 223092.png" alt="My photo"  style="width: 700px; height: auto;">
+  <figcaption>KiCad Result</figcaption>
+</figure>
+After taking a slight fork in the road, I decided to return once again to pcb work, something I'm not fully competent in (yet). Coincidentally, comma.ai released a challenge so I decided to test my boundaries and hopefully figure out what I need to work on. 
+<p>If you don&rsquo;t know them, (pull up a browser now), comma.ai is a pioneering ai and self-driving company run by George Hotz, whom is also known for various &ldquo;hacks&rdquo;. They&rsquo;ve made Openpilot, a L2 operational self driving software that is a really nice open-source version of the things that other automotive manufacturers keep behind closed doors.</p>
+<p>The essence of the challenge <a href="https://github.com/commaai/PCBGolf" target="_blank" rel="noopener">https://github.com/commaai/PCBGolf</a>  is to</p>
+<ol>
+<li>Design a PCBA based on their (panda jungle v2) and a parts list</li>
+<li>Make the pcb manufacturable by jlcpcb</li>
+<li>Make sure it works (even passingly)</li>
+<li>Add the</li>
+<li>Make any modifications you need(hardware, firmware, jailbreak) anything goes</li>
+</ol>
+<figure style="text-align: center;">
+  <img src="/pandacommashop.jpg" alt="My photo"  style="width: 300px; height: auto;">
+  <figcaption>pandajunglev2</figcaption>
+</figure>
+<p>Since GPT Astra&rsquo;s release, the jury is out on whether or not ia will replace PCB Designers so this seems like their attempt at producing an independent answer.</p>
+<p>Since the deadline was at 11:59 PM EST, I made some calls and blocked off a solid 12 hrs to sit down and try to get something working.</p>
+<h2 id="a-fool-and-his-time">A Fool and his Time</h2> <p>Like the start of any good story, I started by wasting some time, since time was clearly something I had a lot of. Analyzing the formula to compute final score,<br>
+$f(x) = w<em>h</em>l + 50N_vias + 5000N_layers$, I did some quick mental maths.</p>
+<p>Looking at the leaderboard at the time high score of 13,000 I quickly figured out that someone had managed to make a working 2 layer board.
+However, I still decided on using a 4 layer board since I knew myself well enough to know that I wasn&rsquo;t doing a 2 layer anytime soon.</p>
+<p>Interestingly enough, the bounding box term of w<em>h</em>l also made me consider horizontal mounting of the usb connectors but I ultimately ditched that thought for more pressing matters.</p>
+<h2 id="the-sharpest-tool-in-the-shed">The Sharpest Tool in the Shed</h2> <p>That&rsquo;s me by the way. I had accumulated perhaps a 100 hour or so in KiCad, about 5 hours in Altium Designer, and 3 hrs in Cadence Virtuoso as a result of school. It was a no-brainer.</p>
+<p>I also knew that there was an Autorouter plugin which I wanted to use again (subtle foreshadowing). More importantly, I wanted to do things right this time around instead of fudging things up.</p>
+<h2 id="the-plan">The plan</h2> <ol>
+<li>Understand the block diagram of the schematic</li>
+<li>Look at past &ldquo;pandas&rdquo; to get a baseline of how the components were layed out to avoid excessive # vias</li>
+<li>Start layouting Power, high speed traces, etc.</li>
+<li>Get the autorouter to do the rest</li>
+<li>Cut down board dimensions and submit!</li>
+</ol>
+<h2 id="hour-02-setup-tax">Hour 0–2: setup tax</h2> <p>9:00 AM</p>
+<p>The schematic is nicely sorted into subsheets (nice) of Power, STM32H7, USB+SD, CAN-FD, and Channels.</p>
+<p>Luckily, I had enough EE knowledge to recognize the AP62300T Buck converters and spent some time admiring the protection circuitry like the TVS and P-type RPP. What can I say? It&rsquo;s cool.</p>
+<p>I pulled up the datasheet quickly and made a mental note of their recommendations for the layout.</p>
+<p>Although I had analyzed DC-DC converters in Spice, I never layed one out before so I knew that this would take some time.
+The schematic for the STM32H7 (w0w) was relatively straightforward to understand other than the smattering of net labels.
+I had previously also encountered USB-C ports, hubs, and microSDs in a RP2040 design guide so I skipped through those as well.
+Next, for the CAN-FD, I knew about the transceiver and it was easy enough to deduce the comparator LED or what have you.
+Finally, for channels, I had to search up what a TPS25942 is. It&rsquo;s a eFuse MUX which is a nifty little IC.
+The one circuit that took some time to figure out is the Ignition and Relay subcircuits which basically just simulate electronic controls from the STM32.</p>
+<p>11:00 AM-12:00PM</p>
+<figure style="text-align: center;">
+  <img src="/Screenshot 2026-10-12 222302.png" alt="My photo"  style="width: 500px; height: auto;">
+  <figcaption>Importing the schematic symbols</figcaption>
+</figure>
+<p>By noon, I had started laying out the PCB. I first centered the STM32H7 and made the edge cut rectangle. I wrangled together the stackup with solid ground planes on L2 and L3 for the buck converter. With all that out of the way and a hot cup of water, I started with the power path namely the 12V-&gt;5V-&gt;3V3.
+Some key notes that I either knew from books or from research.</p>
+<ul>
+<li>TVS Diode should be as close to the source as possible</li>
+<li>Bypass capacitors should be as close to the pins of the uC as possible</li>
+<li>Vias are needed for thermal relief and for a connection to the solid ground plane.</li>
+<li>Parallel signals can cause crosstalk and chatter, affecting sensitive timers and the like</li>
+</ul>
+<p>12:00PM-1:00PM: What goes up must come down</p>
+<p>I started by arranging the related nets together for the Buck converters. Studying the reference sheet, I quickly figured out how to make the Planes as well as add those aesthetic edges. Who said CAD couldn&rsquo;t be helpful? This took some time but I figured that I would just copy the schematic for the first to the second. I got something somewhat reasonable in the first hour and then I looked up how to clone designs but I couldn&rsquo;t figure out the menus so I decided to do things the old-fashioned way yet again.</p>
+<p>1:00PM-3:00PM: Time&rsquo;s Up!</p>
+<p>Nope. But it was definitely starting to get a little tight. I pieced together the External crystals (again with 2 mm) of the uC and the Hub. I also played around with the bypass capacitors and generally did some of the easier tasks. I also connected the 120-Ohm termination resistors between the CAN_L and CAN_H and hooked up the microSD card pins. I took quick break for lunch where I discovered that there was no one on campus.</p>
+<p>3:00PM-4:00PM: Pins, pins, and more pins.
+I experienced a tinge of nostalgia thinking about the last time I did a pcb design with the slightly dated but excellent ATMega328p with its <em>32</em> QFN pins and cringed a little at how I felt that was &ldquo;complex&rdquo;. Just the way learning goes, I guess. I experienced the bright idea of using User.Comments to write out the main blocks of pins so I could figure out how I wanted to orient the uC and the main subsystems around it. I also reconfigured some pins in the schematic to prevent the use of those nasty vias.</p>
+<p>4:00PM-5:00PM: The wheels on the Universal Serial Bus go insert RUNing guy -&gt;</p>
+<figure style="text-align: center;">
+  <img src="/Screenshot 2026-10-12 192119.png" alt="My photo"  style="width: 500px; height: auto;">
+  <figcaption>JLCPCB Controlled Impedance Calculator</figcaption>
+</figure>
+<p>I did a quick calculation for Trace width on jlcpcb&rsquo;s handy calculator which gave me the necessary requirements to achieve a smooth 90 ohms of &laquo;Controlled impedance&raquo;. Who doesn&rsquo;t like control? I calculated the skew (very scientific) to be 0.3mm which is under the 3mm that AI says USB-C can tolerate. Thanks Sam Altman. I also took a quick little browser surfing break and downloaded some pdfs on designing high speed circuits which added some more lost time.</p>
+<p>I spent some time understanding the key parameters such as Microstrip vs Stripline, dielectric constants, and looked at some pretty radiating pictures of EM radiation.</p>
+<p>Anyways, I edited those Net Classes and then had the pleasure of finding out that there was absolutely no way I was routing two 0.31mm wide chungus traces in about as much space as Harry Potter had to store his schoolbag.</p>
+<p>5:00-7:00PM</p>
+<p>At this point, I was pretty aware of the challenges needed to finish this challenge. I hadn&rsquo;t even gotten to the packaging component; ie making a case. I ran a quick DRC and boom; 500+ errors on the DRC and probably an equal number of warnings. Realistically half of the errors were caused by improperly set minimums on KiCad or silkscreen overlaps.</p>
+<p>7:00PM-10:00PM</p>
+<p>I kept grinding away at this</p>
+<p>10:00PM-11:00PM: Wrapup :)</p>
+<h2 id="takeaways-and-what-i-learned">Takeaways and what I learned</h2> <ul>
+<li>Get comfortable with shortcuts. Carpal tunnel ain&rsquo;t fun and it definitely ain&rsquo;t pretty to look at.</li>
+<li>References are your friend. There&rsquo;s no need to reinvent the wheel and definitely no need to reinvent the buck converter.</li>
+<li>Foresigh matters a lot. 1 minute of planning can be the difference between 1 hour of work.</li>
+</ul>
+<p>A number on a leaderboard would be nice but realistically participating was super helpful in rekindling my interest in pcb work. Im still waiting for Sam to come up with something new but until then, Im still happy to keep trying my luck at this.</p>
+<p>To be honest, I will follow up with what I submitted and see in two months if I can fix it up. For now, its still at a sad 495 errors in the DRC but it could be worse. Ha</p>
+<p>I&rsquo;m interested in the winning submissions and eager to learn from their designs, so stay tuned for more long form blogs like this.</p>
+
+
+
+        <div class="footer">
+    © 2026 John Hu ·
+    <a href="mailto:johnhu1235@gmail.com">email</a> ·
+    <a href="https://github.com/hujohn1" target="_blank" rel="noopener">GitHub</a> ·
+    <a href="https://www.linkedin.com/in/johnhu2/" target="_blank" rel="noopener">LinkedIn</a>
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+<p>Find my latest resume below.</p>
+<p><a href="{{ "resume.pdf" | relURL }}">Download PDF</a></p>
+<iframe src="{{ "resume.pdf" | relURL }}" title="Resume" style="width:100%; min-height:70vh; border:1px solid var(--secondary-color, #727578);"></iframe>
+{{ end }}
