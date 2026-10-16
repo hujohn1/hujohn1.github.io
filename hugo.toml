@@ -1,4 +1,4 @@
-baseURL = 'https://hujohn1.github.io/'
+baseURL = 'https://johnhu.ca/'
 locale = 'en-us'
 title = 'John Hu'
 theme = 'hugo-theme-console'
