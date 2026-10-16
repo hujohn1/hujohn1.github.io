@@ -111,7 +111,6 @@ jobs:
             --gc \
             --minify \
             --environment production \
-            --baseURL "${{ steps.pages.outputs.base_url }}/" \
             --cacheDir "${{ runner.temp }}/.cache/hugo"
 
       - name: Cache save
