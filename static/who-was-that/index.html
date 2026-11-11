@@ -65,6 +65,10 @@ input::placeholder,textarea::placeholder{color:var(--dim)}
 .tag b{color:var(--text);font-weight:500}
 .notes{color:var(--dim);font-size:15px;white-space:pre-wrap;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .empty{text-align:center;color:var(--dim);padding:32px 20px}
+.empty .cta{display:block;margin:14px auto 0;background:var(--accent);color:#fff;border-radius:12px;padding:12px 18px;font-weight:600}
+.demobar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#ff9f0a26;color:var(--text);border-radius:12px;padding:6px 6px 6px 14px;margin-top:12px;font-size:15px}
+.demobar[hidden]{display:none}
+.demobar button{font-weight:600}
 .foot{display:flex;justify-content:center;gap:20px;margin-top:20px;font-size:15px}
 
 dialog{border:0;padding:0;background:var(--bg);color:var(--text);width:100%;max-width:560px;max-height:94vh;margin:auto auto 0;border-radius:14px 14px 0 0;overflow:auto;animation:up .3s cubic-bezier(.2,.8,.2,1)}
@@ -155,6 +159,7 @@ input[type=date]{text-align:right;color:var(--accent)}
     <button class="pill" id="f_practice">🧠 Practice</button>
   </div>
 
+  <div class="demobar" id="demobar" hidden><span>Example people. Nothing here is saved.</span><button id="demo_exit">Exit</button></div>
   <div class="count" id="count"></div>
   <div class="group" id="list"></div>
 
@@ -267,7 +272,39 @@ async function load(){
   if(!Array.isArray(data)){ data = legacy(); if(data.length) save(data); }
   return data.map(p => ({attrs:{}, ...p}));
 }
+// ---------- example mode: try the app without typing anything; never saved ----------
+let demo = false;
+const SAMPLE = [
+  ['Sarah Chen','Lincoln High','Durham','Female','Teacher','Coaches the robotics team, has a golden retriever'],
+  ['Marcus Bell','Lincoln High','Durham','Male','Classmate','Plays bass, always in the music room'],
+  ['Ana Lopez','Lincoln High','Raleigh','Female','Classmate','Wants to study nursing'],
+  ['Priya Patel','Internship','New York','Female','Coworker','On the data team, from Toronto originally'],
+  ['Tom Wu','Gym','Durham','Male','Friend','Trains at 6am, marathon in March'],
+  ['Jordan Hayes','Gym','Durham','Non-binary','Acquaintance','Front desk, recommended the climbing wall'],
+  ['Leo Martins','Hackathon','Chapel Hill','Male','Networking','Built a drone startup, studies EE'],
+  ['Maya Singh','Hackathon','Durham','Female','Friend','Designer, made our team’s logo']
+];
+function startDemo(){
+  const d = new Date();
+  demo = true; sel = {}; query = ''; mode = {near:false, recent:false};
+  people = SAMPLE.map(([name, met, loc, g, rel, notes], i) => ({
+    id:'demo'+i, name, phone:'', notes, created:0,
+    metOn:new Date(d - (i*9+1)*864e5).toISOString().slice(0,10),
+    attrs:{Location:loc, Gender:g, 'Met at':met, Relationship:rel}
+  }));
+  document.getElementById('demobar').hidden = false;
+  render();
+}
+function endDemo(){
+  demo = false; people = []; sel = {}; query = ''; mode = {near:false, recent:false};
+  document.getElementById('q').value = '';
+  document.getElementById('demobar').hidden = true;
+  render();
+}
+document.getElementById('demo_exit').onclick = endDemo;
+
 async function save(data = people){
+  if(demo) return;
   try{ await kvSet('people', data); }
   catch(e){
     try{ localStorage.setItem('whoWasThat.v2', JSON.stringify(data)); }
@@ -401,7 +438,7 @@ function renderCards(){
     ? `${list.length} met within ${fmtDist(NEAR_M)}` : `${list.length} of ${people.length} people`;
   const host = document.getElementById('list');
   if(!list.length){
-    host.innerHTML = `<div class="empty">${!people.length ? 'No one yet. Tap + to add someone.'
+    host.innerHTML = `<div class="empty">${!people.length ? 'No one yet. Tap + to add someone.<button class="cta" onclick="startDemo()">See it with example people</button>'
       : mode.near ? 'No one you met near here. People only show up here if “Save where we met” was on.'
       : 'No one matches. Scroll the wheels back to Any.'}</div>`;
     return;
@@ -552,6 +589,9 @@ document.getElementById('form').addEventListener('submit', e => {
   });
   const data = {name, phone:norm(document.getElementById('f_phone').value), notes:norm(document.getElementById('f_notes').value),
     metOn:document.getElementById('f_met').value, attrs, photo:draft.photo, geo:document.getElementById('f_geo').checked ? draft.geo : null, updated:Date.now()};
+  if(demo && !editingId){ // first real person: drop the examples and start saving for real
+    demo = false; people = []; sel = {}; document.getElementById('demobar').hidden = true;
+  }
   if(editingId) Object.assign(people.find(x=>x.id===editingId), data);
   else people.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), created:Date.now(), ...data});
   save(); dlg.close(); render();
@@ -671,6 +711,7 @@ document.getElementById('file').onchange = async e => {
   try{
     const arr = JSON.parse(await e.target.files[0].text());
     if(!Array.isArray(arr)) throw 0;
+    if(demo) endDemo();
     const ids = new Set(people.map(p=>p.id)); let n = 0;
     arr.forEach(p => { if(p && p.name && !ids.has(p.id)){ people.push({attrs:{}, ...p}); n++; } });
     save(); render(); toast(`Imported ${n} ${n===1?'person':'people'}`);
