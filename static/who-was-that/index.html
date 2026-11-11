@@ -113,6 +113,7 @@ input[type=date]{text-align:right;color:var(--accent)}
 .practice[hidden]{display:none}
 .pnav{display:flex;justify-content:space-between;align-items:center}
 .pnav span{color:var(--dim);font-size:15px}
+#p_prog{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
 .pcard{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;max-width:480px;margin:0 auto;width:100%}
 .pcard .big{width:140px;height:140px;border-radius:50%;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:52px;color:#fff;font-weight:600}
 .pname{font-size:30px;font-weight:700;min-height:40px}
@@ -124,6 +125,17 @@ input[type=date]{text-align:right;color:var(--accent)}
 .pbtns .miss{background:var(--red)}
 .pbtns .got{background:var(--green)}
 .pbtns .sec{background:var(--panel);color:var(--accent)}
+.pbtns{flex-wrap:wrap}
+.prephead{color:var(--dim);font-size:15px;margin:0 4px 12px}
+.opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:var(--text);padding:11px 14px;border-radius:0;min-height:52px}
+.opt+.opt{border-top:.5px solid var(--sep)}
+.opt .grow{flex:1;min-width:0}
+.opt .grow div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opt small{color:var(--dim);font-size:13px}
+.opt .n{color:var(--dim);font-size:15px}
+.opt .faces{display:flex;padding-left:8px;flex:0 0 auto}
+.opt .faces>*{width:26px;height:26px;flex:0 0 26px;font-size:11px;margin-left:-8px;border:2px solid var(--panel)}
+.opt::after{content:"›";color:var(--dim);font-size:22px;line-height:1}
 </style>
 </head>
 <body>
@@ -140,7 +152,7 @@ input[type=date]{text-align:right;color:var(--accent)}
   <div class="filters">
     <button class="pill" id="f_near">📍 Nearby</button>
     <button class="pill" id="f_recent">🕒 Recent</button>
-    <button class="pill" id="f_practice">🧠 Practice names</button>
+    <button class="pill" id="f_practice">🧠 Practice</button>
   </div>
 
   <div class="count" id="count"></div>
@@ -175,6 +187,19 @@ input[type=date]{text-align:right;color:var(--accent)}
       <button type="button" class="delete" id="del">Delete Person</button>
     </div>
   </form>
+</dialog>
+
+<dialog id="prep">
+  <div class="nav">
+    <button type="button" class="l" id="prep_cancel">Cancel</button>
+    <b>Practice Names</b>
+    <span></span>
+  </div>
+  <div class="sheetbody">
+    <div class="prephead">Going somewhere? Pick the place and run through everyone you met there.</div>
+    <div class="search" style="border:0;margin:0 0 14px;padding:0"><input id="prep_q" type="search" placeholder="Where are you going?" autocomplete="off"></div>
+    <div id="prep_list"></div>
+  </div>
 </dialog>
 
 <div class="practice" id="practice" hidden>
@@ -548,24 +573,70 @@ document.getElementById('f_near').onclick = async () => {
 };
 document.getElementById('f_recent').onclick = () => { mode.recent = !mode.recent; if(mode.recent) mode.near = false; render(); };
 
-// ---------- Practice: flashcards of whoever the wheels have selected ----------
-let pq = [], pstats = {};
-function startPractice(){
-  const pool = currentList();
-  if(!pool.length){ toast('No one to practice — add people or widen the wheels'); return; }
-  pq = [...pool].sort(() => Math.random() - .5);
-  pstats = {total:pool.length, first:new Set(), missed:new Set(), done:0};
+// ---------- Practice: pick where you're going, then flashcards of everyone from there ----------
+const PLACEY = ['met at','location','school','work','company','workplace','job','church','club','team','gym','city','hometown','where'];
+const prep = document.getElementById('prep');
+function openPrep(){
+  document.getElementById('prep_q').value = '';
+  renderPrep(); prep.showModal(); prep.scrollTop = 0;
+}
+function faces(list){ return `<span class="faces">${list.slice(0,3).map(p=>avatar(p)).join('')}</span>`; }
+function renderPrep(){
+  const t = lc(document.getElementById('prep_q').value);
+  const shown = currentList();
+  const filtered = shown.length !== people.length;
+  // one option per (category, value): e.g. Met at → Lincoln High
+  const groups = [];
+  for(const k of allKeys()){
+    const m = new Map();
+    for(const p of people){ const v = attr(p, k.l); if(v){ const g = m.get(lc(v)) || {value:v, list:[]}; g.list.push(p); m.set(lc(v), g); } }
+    for(const g of m.values()) groups.push({key:k.label, kl:k.l, ...g});
+  }
+  const rank = g => { const i = PLACEY.indexOf(g.kl); return i < 0 ? 99 : i; };
+  groups.sort((a,b) => rank(a)-rank(b) || b.list.length-a.list.length || a.value.localeCompare(b.value));
+  const hits = groups.filter(g => !t || lc(g.value).includes(t) || lc(g.key).includes(t));
+  const opt = (i, title, sub, list) => `<button type="button" class="opt" data-i="${i}">${faces(list)}<span class="grow"><div>${esc(title)}</div><small>${esc(sub)}</small></span><span class="n">${list.length}</span></button>`;
+  let html = '';
+  const choices = [];
+  if(!t && people.length){
+    choices.push({title: filtered ? 'Everyone shown now' : 'Everyone', list: shown});
+    html += `<div class="group" style="margin-bottom:20px">${opt(0, choices[0].title, filtered ? 'Matches your wheels and search' : 'All your people', shown)}</div>`;
+  }
+  if(hits.length){
+    html += `<div class="cap">${t ? 'Matches' : 'Places & groups'}</div><div class="group">` + hits.map(g => {
+      choices.push({title:g.value, list:g.list});
+      return opt(choices.length-1, g.value, g.key, g.list);
+    }).join('') + '</div>';
+  }
+  if(!html) html = `<div class="empty">${people.length ? 'No place matches that. Add it as “Met at” or “Location” on the people you met there.' : 'Add some people first.'}</div>`;
+  const host = document.getElementById('prep_list');
+  host.innerHTML = html;
+  host.querySelectorAll('.opt').forEach(b => b.onclick = () => { prep.close(); const c = choices[+b.dataset.i]; startPractice(c.list, c.title); });
+}
+document.getElementById('prep_q').addEventListener('input', renderPrep);
+document.getElementById('prep_cancel').onclick = () => prep.close();
+
+let pq = [], pstats = {}, pset = {list:[], title:''};
+function startPractice(list, title, all = list){
+  if(!list.length){ toast('No one to practice'); return; }
+  pset = {list, title, all};
+  pq = [...list].sort(() => Math.random() - .5);
+  pstats = {total:list.length, missed:new Set(), done:0};
   document.getElementById('practice').hidden = false;
   showCard(false);
 }
 function showCard(revealed){
   const card = document.getElementById('p_card'), btns = document.getElementById('p_btns');
-  document.getElementById('p_prog').textContent = pq.length ? `${pstats.done} / ${pstats.total}` : '';
+  document.getElementById('p_prog').textContent = pq.length ? `${pset.title} · ${pstats.done + 1} of ${pstats.total}` : pset.title;
   if(!pq.length){
     const got = pstats.total - pstats.missed.size;
-    card.innerHTML = `<div style="font-size:60px">🎉</div><div class="pname">${got} / ${pstats.total}</div><div class="notes">knew on the first try</div>`;
-    btns.innerHTML = `<button class="sec" id="p_again">Again</button><button id="p_done">Done</button>`;
-    document.getElementById('p_again').onclick = startPractice;
+    const missed = pset.list.filter(p => pstats.missed.has(p.id));
+    card.innerHTML = `<div style="font-size:60px">${missed.length ? '💪' : '🎉'}</div><div class="pname">${got} / ${pstats.total}</div>
+      <div class="notes">${missed.length ? `knew on the first try. Still shaky: ${missed.map(p=>esc(p.name)).join(', ')}` : 'All of them on the first try. You’re ready.'}</div>`;
+    btns.innerHTML = (missed.length ? `<button class="miss" id="p_retry">Retry the ${missed.length} I forgot</button>` : '')
+      + `<button class="sec" id="p_again">Run all again</button><button id="p_done">Done</button>`;
+    if(missed.length) document.getElementById('p_retry').onclick = () => startPractice(missed, pset.title, pset.all);
+    document.getElementById('p_again').onclick = () => startPractice(pset.all, pset.title);
     document.getElementById('p_done').onclick = closePractice;
     return;
   }
@@ -584,7 +655,7 @@ function showCard(revealed){
   }
 }
 function closePractice(){ document.getElementById('practice').hidden = true; }
-document.getElementById('f_practice').onclick = startPractice;
+document.getElementById('f_practice').onclick = openPrep;
 document.getElementById('p_close').onclick = closePractice;
 
 // ---------- misc ----------

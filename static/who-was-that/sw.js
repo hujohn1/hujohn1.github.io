@@ -1,5 +1,5 @@
 // Offline support: serve the app from cache when there's no signal, refresh the cache when there is.
-const CACHE = 'wwt-v1';
+const CACHE = 'wwt-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
