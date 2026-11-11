@@ -13,9 +13,22 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <title>Who Was That</title>
+<script>
+  // apply the saved Light/Dark choice before anything draws, so there's no flash
+  try{ const t = localStorage.getItem('whoWasThat.theme'); if(t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; }catch(e){}
+</script>
 <style>
-:root{--bg:#f2f2f7;--panel:#fff;--sep:#c6c6c8;--text:#000;--dim:#8a8a8e;--accent:#007aff;--fill:#7676801f;--red:#ff3b30;--green:#34c759;--blur:#f2f2f7d9}
-@media(prefers-color-scheme:dark){:root{--bg:#000;--panel:#1c1c1e;--sep:#38383a;--text:#fff;--dim:#8e8e93;--accent:#0a84ff;--fill:#7676803d;--red:#ff453a;--green:#30d158;--blur:#000000d9}}
+:root{color-scheme:light;--bg:#f2f2f7;--panel:#fff;--sep:#c6c6c8;--text:#000;--dim:#8a8a8e;--accent:#007aff;--fill:#7676801f;--red:#ff3b30;--green:#34c759;--blur:#f2f2f7d9}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#000;--panel:#1c1c1e;--sep:#38383a;--text:#fff;--dim:#8e8e93;--accent:#0a84ff;--fill:#7676803d;--red:#ff453a;--green:#30d158;--blur:#000000d9;--segon:#636366}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#000;--panel:#1c1c1e;--sep:#38383a;--text:#fff;--dim:#8e8e93;--accent:#0a84ff;--fill:#7676803d;--red:#ff453a;--green:#30d158;--blur:#000000d9;--segon:#636366}
+.hbtns{display:flex;gap:10px}
+.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px}
+.seg button{flex:1;color:var(--text);font-size:15px;font-weight:500;padding:7px;border-radius:7px}
+.seg button.on{background:var(--segon,var(--panel));box-shadow:0 2px 6px #0002}
+.irow{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;cursor:pointer}
+.irow+.irow{border-top:.5px solid var(--sep)}
+.irow input{width:22px;height:22px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--accent)}
+.irow .dup{color:#ff9f0a;font-size:13px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:17px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
@@ -144,7 +157,7 @@ input[type=date]{text-align:right;color:var(--accent)}
 </head>
 <body>
 <div class="wrap">
-  <header><h1>People</h1><button class="plus" id="add" aria-label="Add person">+</button></header>
+  <header><h1>People</h1><div class="hbtns"><button class="plus" id="gear" aria-label="Settings" style="font-size:19px">⚙︎</button><button class="plus" id="add" aria-label="Add person">+</button></div></header>
 
   <div class="group picker">
     <div class="reels" id="reels"></div>
@@ -163,7 +176,6 @@ input[type=date]{text-align:right;color:var(--accent)}
   <div class="count" id="count"></div>
   <div class="group" id="list"></div>
 
-  <div class="foot"><button id="export">Export backup</button><button id="import">Import</button></div>
 </div>
 
 <dialog id="dlg">
@@ -190,6 +202,44 @@ input[type=date]{text-align:right;color:var(--accent)}
       <div class="cap">Notes</div>
       <div class="group"><textarea id="f_notes" placeholder="Things to remember…"></textarea><button type="button" class="mic" id="mic" hidden>🎙 Dictate a note</button></div>
       <button type="button" class="delete" id="del">Delete Person</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="settings">
+  <div class="nav"><span></span><b>Settings</b><button type="button" class="r" id="set_done">Done</button></div>
+  <div class="sheetbody">
+    <div class="cap">Appearance</div>
+    <div class="seg" id="seg" style="margin-bottom:22px"><button data-t="system">System</button><button data-t="light">Light</button><button data-t="dark">Dark</button></div>
+    <div class="cap">Your people</div>
+    <div class="group" style="margin-bottom:10px">
+      <button type="button" class="opt" id="set_notes"><span class="grow"><div>📝 Import from Notes</div><small>Paste a list from Apple Notes, Samsung Notes, anywhere</small></span></button>
+      <button type="button" class="opt" id="export"><span class="grow"><div>⬆️ Export backup</div><small>Save everyone to a file</small></span></button>
+      <button type="button" class="opt" id="import"><span class="grow"><div>⬇️ Restore from backup</div><small>Load a file you exported</small></span></button>
+    </div>
+    <div class="prephead">Your people are stored only on this device. Nothing is uploaded. Export a backup now and then.</div>
+  </div>
+</dialog>
+
+<dialog id="imp">
+  <form id="imp_form" autocomplete="off">
+    <div class="nav">
+      <button type="button" class="l" id="imp_cancel">Cancel</button>
+      <b>Import from Notes</b>
+      <button type="submit" class="r" id="imp_go">Import</button>
+    </div>
+    <div class="sheetbody">
+      <div class="prephead">In your notes app, open the note, <b>Select All</b>, <b>Copy</b>, then paste here. One person per line works, or a blank line between people.</div>
+      <div class="group"><textarea id="imp_text" placeholder="Sarah Chen - met at the gym, likes climbing 555-123-4567&#10;Mike Ross: Lincoln High, plays bass&#10;Priya (internship) from Toronto"></textarea><button type="button" class="mic" id="imp_paste">📋 Paste from clipboard</button></div>
+      <div class="cap">Same for everyone (optional)</div>
+      <div class="group">
+        <div class="f"><label>Met at</label><input id="imp_met" list="dl_imp_met" placeholder="e.g. Lincoln High"></div>
+        <div class="f"><label>Location</label><input id="imp_loc" list="dl_imp_loc" placeholder="e.g. Durham"></div>
+        <div class="f"><label>Met on</label><input id="imp_date" type="date"></div>
+      </div>
+      <datalist id="dl_imp_met"></datalist><datalist id="dl_imp_loc"></datalist>
+      <div class="cap" id="imp_found"></div>
+      <div class="group" id="imp_list"></div>
     </div>
   </form>
 </dialog>
@@ -438,7 +488,7 @@ function renderCards(){
     ? `${list.length} met within ${fmtDist(NEAR_M)}` : `${list.length} of ${people.length} people`;
   const host = document.getElementById('list');
   if(!list.length){
-    host.innerHTML = `<div class="empty">${!people.length ? 'No one yet. Tap + to add someone.<button class="cta" onclick="startDemo()">See it with example people</button>'
+    host.innerHTML = `<div class="empty">${!people.length ? 'No one yet. Tap + to add someone.<button class="cta" onclick="openImport()">📝 Import from Notes</button><button class="cta" style="background:var(--fill);color:var(--accent)" onclick="startDemo()">See it with example people</button>'
       : mode.near ? 'No one you met near here. People only show up here if “Save where we met” was on.'
       : 'No one matches. Scroll the wheels back to Any.'}</div>`;
     return;
@@ -718,6 +768,137 @@ document.getElementById('file').onchange = async e => {
   }catch(err){ toast('That file is not a valid backup'); }
   e.target.value='';
 };
+
+// ---------- Settings & appearance ----------
+const settings = document.getElementById('settings');
+function getTheme(){ try{ return localStorage.getItem('whoWasThat.theme') || 'system'; }catch(e){ return 'system'; } }
+function applyTheme(t){
+  try{ localStorage.setItem('whoWasThat.theme', t); }catch(e){}
+  const root = document.documentElement;
+  if(t === 'system') delete root.dataset.theme; else root.dataset.theme = t;
+  // keep the phone's status bar matching the app
+  const metas = document.querySelectorAll('meta[name=theme-color]');
+  metas[0].content = t === 'dark' ? '#000000' : '#f2f2f7';
+  metas[1].content = t === 'light' ? '#f2f2f7' : '#000000';
+  document.querySelectorAll('#seg button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+}
+document.querySelectorAll('#seg button').forEach(b => b.onclick = () => applyTheme(b.dataset.t));
+document.getElementById('gear').onclick = () => { applyTheme(getTheme()); settings.showModal(); };
+document.getElementById('set_done').onclick = () => settings.close();
+document.getElementById('set_notes').onclick = () => { settings.close(); openImport(); };
+applyTheme(getTheme());
+
+// ---------- Import from Notes: paste text, we turn it into people ----------
+const imp = document.getElementById('imp');
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const hasWord = (text, v) => new RegExp('(^|[^\\p{L}\\p{N}])' + escRe(v) + '($|[^\\p{L}\\p{N}])', 'iu').test(text);
+function knownValues(keyLc){ return [...new Set([...people.map(p => attr(p, keyLc)).filter(Boolean), ...(PRESETS[keyLc] || [])])]; }
+function bestMatch(text, values){ let best = ''; for(const v of values) if(v.length > best.length && hasWord(text, v)) best = v; return best; }
+const cleanLine = s => s.replace(/^\s*(?:[-*•·◦▪–—✓✔]|\d+[.)]|\[[ xX]?\])\s*/, '').trim();
+const tidy = s => s.replace(/\s{2,}/g, ' ').replace(/^[\s,;:–—-]+|[\s,;:–—-]+$/g, '').trim();
+
+function parseEntry(lines){
+  let first = lines[0], rest = lines.slice(1);
+  if(!rest.length && /:$/.test(first)) return null;                 // a heading like "Gym people:"
+  let phone = '';
+  const pm = lines.join('\n').match(/(\+?\(?\d[\d\s().-]{5,}\d)/);
+  if(pm && pm[1].replace(/\D/g, '').length >= 7){ phone = pm[1].trim(); first = tidy(first.replace(pm[1], '')); rest = rest.map(l => tidy(l.replace(pm[1], ''))).filter(Boolean); }
+  let name = first, extra = '';
+  let cut = -1, len = 0, paren = false;
+  for(const s of [' - ',' – ',' — ',' -- ',': ',', ',' (',' | ',' / ']){
+    const i = first.indexOf(s);
+    if(i > 0 && (cut < 0 || i < cut)){ cut = i; len = s.length; paren = s === ' ('; }
+  }
+  if(cut > 0){
+    name = first.slice(0, cut); extra = first.slice(cut + len);
+    if(paren) extra = extra.replace(/\)/, ',').replace(/,\s*$/, '');
+  } else {
+    const w = first.split(/\s+/);
+    if(w.length > 3){ // "Sarah Chen from the gym" → take the capitalized words as the name
+      let n = 0; while(n < w.length && n < 3 && /^\p{Lu}/u.test(w[n])) n++;
+      n = Math.max(n, 1); name = w.slice(0, n).join(' '); extra = w.slice(n).join(' ');
+    }
+  }
+  name = tidy(name); extra = tidy(extra);
+  if(name === name.toLowerCase()) name = name.replace(/(^|\s)\p{Ll}/gu, c => c.toUpperCase()); // "tom wu" → "Tom Wu"
+  if(!name || name.length > 40) return null;
+  const notes = [extra, ...rest].filter(Boolean).join('\n');
+  const attrs = {};
+  const metRe = notes.match(/\bmet\s+(?:at|in|@|during|through|on)\s+(?:the\s+|a\s+|an\s+)?([^,.;\n]+)/i);
+  const met = bestMatch(notes, knownValues('met at')) || (metRe ? metRe[1].trim().split(/\s+/).slice(0, 4).join(' ').replace(/^\p{Ll}/u, c => c.toUpperCase()) : '');
+  if(met) attrs['Met at'] = met;
+  const loc = bestMatch(notes, knownValues('location'));
+  if(loc) attrs.Location = loc;
+  return {name, phone, notes, attrs};
+}
+function parseNotes(text){
+  text = text.replace(/\r/g, '');
+  const blocks = text.split(/\n\s*\n/).map(b => b.split('\n').map(cleanLine).filter(Boolean)).filter(b => b.length);
+  const byBlock = blocks.length > 1 && blocks.some(b => b.length > 1);
+  const entries = byBlock ? blocks : text.split('\n').map(cleanLine).filter(Boolean).map(l => [l]);
+  return entries.map(parseEntry).filter(Boolean);
+}
+
+let parsed = [];
+function renderImport(){
+  parsed = parseNotes(document.getElementById('imp_text').value);
+  const have = new Set(people.map(p => lc(p.name)));
+  const met = norm(document.getElementById('imp_met').value), loc = norm(document.getElementById('imp_loc').value);
+  document.getElementById('imp_found').textContent = parsed.length ? `Found ${parsed.length} ${parsed.length === 1 ? 'person' : 'people'}. Untick anyone you don’t want` : '';
+  document.getElementById('imp_list').innerHTML = parsed.map((p, i) => {
+    const dup = have.has(lc(p.name));
+    const attrs = {...p.attrs, ...(met ? {'Met at': met} : {}), ...(loc ? {Location: loc} : {})};
+    const tags = Object.entries(attrs).map(([k, v]) => `<span class="tag">${esc(k)}: <b>${esc(v)}</b></span>`).join('');
+    return `<label class="irow"><input type="checkbox" data-i="${i}" ${dup ? '' : 'checked'}><div class="body">
+      <div class="name">${esc(p.name)}</div>${dup ? '<div class="dup">Already in your list</div>' : ''}
+      ${p.phone ? `<div style="color:var(--accent);font-size:15px">${esc(p.phone)}</div>` : ''}
+      ${tags ? `<div class="tags">${tags}</div>` : ''}${p.notes ? `<div class="notes">${esc(p.notes)}</div>` : ''}</div></label>`;
+  }).join('');
+  document.getElementById('imp_list').style.display = parsed.length ? '' : 'none';
+  updateImpCount();
+}
+function updateImpCount(){
+  const n = document.querySelectorAll('#imp_list input:checked').length;
+  const go = document.getElementById('imp_go');
+  go.textContent = n ? `Import ${n}` : 'Import'; go.disabled = !n; go.style.opacity = n ? 1 : .35;
+}
+function openImport(){
+  document.getElementById('imp_text').value = '';
+  document.getElementById('imp_met').value = ''; document.getElementById('imp_loc').value = ''; document.getElementById('imp_date').value = '';
+  document.getElementById('dl_imp_met').innerHTML = knownValues('met at').map(v => `<option value="${esc(v)}">`).join('');
+  document.getElementById('dl_imp_loc').innerHTML = knownValues('location').map(v => `<option value="${esc(v)}">`).join('');
+  renderImport(); imp.showModal(); imp.scrollTop = 0;
+}
+let impTimer;
+document.getElementById('imp_text').addEventListener('input', () => { clearTimeout(impTimer); impTimer = setTimeout(renderImport, 150); });
+['imp_met', 'imp_loc'].forEach(id => document.getElementById(id).addEventListener('input', renderImport));
+document.getElementById('imp_list').addEventListener('change', updateImpCount);
+document.getElementById('imp_cancel').onclick = () => imp.close();
+document.getElementById('imp_paste').onclick = async () => {
+  try{
+    const t = await navigator.clipboard.readText();
+    if(!t) throw 0;
+    const box = document.getElementById('imp_text');
+    box.value = box.value ? box.value + '\n' + t : t; renderImport();
+  }catch(e){ toast('Tap and hold in the box, then tap Paste'); document.getElementById('imp_text').focus(); }
+};
+document.getElementById('imp_form').addEventListener('submit', e => {
+  e.preventDefault();
+  const picks = [...document.querySelectorAll('#imp_list input:checked')].map(c => parsed[+c.dataset.i]);
+  if(!picks.length) return;
+  if(demo) endDemo();
+  const met = norm(document.getElementById('imp_met').value), loc = norm(document.getElementById('imp_loc').value);
+  const metOn = document.getElementById('imp_date').value;
+  const keyFor = k => (allKeys().find(x => x.l === lc(k)) || {label:k}).label;
+  picks.forEach((p, i) => {
+    const attrs = {};
+    for(const [k, v] of Object.entries({...p.attrs, ...(met ? {'Met at': met} : {}), ...(loc ? {Location: loc} : {})})) attrs[keyFor(k)] = v;
+    people.push({id: Date.now().toString(36) + i + Math.random().toString(36).slice(2, 6), created: Date.now(),
+      name: p.name, phone: p.phone, notes: p.notes, metOn, attrs, photo: null, geo: null});
+  });
+  save(); imp.close(); render();
+  toast(`Imported ${picks.length} ${picks.length === 1 ? 'person' : 'people'}`);
+});
 
 (async () => {
   people = await load();
